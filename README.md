@@ -1,58 +1,63 @@
-# 🦙 LLaMA 3 Legal Assistant Fine-Tuning
-
-Welcome to the **LLaMA 3 Legal Assistant** fine-tuning project! ⚖️🤖  
-This repository contains code and assets for fine-tuning the LLaMA 3 model on legal domain data using LoRA adapters.
-
----
-
-## 🚀 Project Overview
-
-This project fine-tunes a large language model (LLaMA 3) to assist with legal text understanding and generation. It uses **LoRA (Low-Rank Adaptation)** for efficient fine-tuning. The goal is to build a powerful AI assistant specialized in legal language.
+# ⚖️ Legal-QA Fine-Tuned Model (Mistral-7B)
+A **domain-adapted Legal AI Assistant** built by **fine-tuning Mistral-7B-Instruct** on a **Legal Q&A dataset** using **LoRA (Low-Rank Adaptation)**.  
+This project demonstrates how to adapt large language models for specialized domains like **law, compliance, and legal research** on limited compute (Colab T4 GPU).
 
 ---
 
-## 📂 What’s inside?
-
-- `legalfinetuning.ipynb` — Fine-tuning notebook with all training steps  
-- Tokenizer files:  
-  - `tokenizer.json`  
-  - `tokenizer_config.json`  
-  - `special_tokens_map.json`  
-- Scripts and utilities used during fine-tuning (if any)  
-- This README.md with project info  
-
-> ⚠️ Model weights (`.safetensors`) are **not included** here due to large size. You can find the trained model on [Hugging Face Hub](https://huggingface.co/AmiyendraOP/llama3-legal-finetuned).
+## 📌 Project Overview
+- **Base Model**: [`mistralai/Mistral-7B-Instruct-v0.2`](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)  
+- **Dataset**: Custom Legal **Question → Answer** pairs, formatted into instruction style.  
+- **Training Method**: **LoRA fine-tuning** with Hugging Face `transformers` + `peft`.  
+- **Hardware**: Google Colab T4 GPU (16GB VRAM).  
+- **Goal**: Improve performance of Mistral on **domain-specific legal queries** while being cost-efficient.  
 
 ---
 
-## 📦 How to use
-
-1. Clone this repo  
-2. Download the model weights from Hugging Face Hub  
-3. Load the tokenizer and model using the scripts or notebook  
-4. Run inference or continue training  
-
----
-
-## 🔗 Useful Links
-
-- [Hugging Face Model Repo](https://huggingface.co/AmiyendraOP/llama3-legal-finetuned)  
-- [LoRA Paper](https://arxiv.org/abs/2106.09685)  
-- [LLaMA Model Info](https://ai.facebook.com/blog/large-language-model-llama-meta-ai/)  
+## ⚡ Features
+✅ Domain-specific **Legal Q&A understanding**  
+✅ Efficient training using **LoRA adapters**  
+✅ Works on **consumer-grade GPUs (T4)**  
+✅ Easily extendable to other datasets (Medical, Finance, etc.)  
 
 ---
 
-## 🙏 Acknowledgments
+## 📂 Repository Structure
+├── legalfinetuningllm.ipynb # Colab notebook with full training pipeline
+├── ipc_qa.json/ # Legal Q&A dataset (JSON/CSV)
+├── README.md # Project documentation
 
-Thanks to the amazing open source community, Hugging Face, and Meta AI for making this possible! ❤️
-
----
-
-## 📬 Contact
-
-Feel free to reach out via GitHub Issues or DM for questions or collaboration!
 
 ---
 
-✨ Happy fine-tuning! ✨  
-— Amiyendra Sarkar
+## 🚀 Quick Start
+
+### 1️⃣ Clone the repo
+```bash
+git clone https://github.com/<your-username>/legal-qa-mistral.git
+cd legal-qa-mistral
+2️⃣ Install dependencies
+pip install torch transformers datasets peft accelerate bitsandbytes
+
+3️⃣ Run fine-tuning
+
+Open the Colab notebook (notebook.ipynb) and run all cells.
+This will:
+
+Load the base Mistral-7B-Instruct model
+
+Preprocess the Legal Q&A dataset
+
+Fine-tune with LoRA adapters
+
+Save the trained model in /content/legal-llm
+4️⃣ Inference Example
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_name = "/content/legal-llm"  
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
+
+prompt = "What is the difference between a contract and an agreement?"
+inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+outputs = model.generate(**inputs, max_new_tokens=200)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
